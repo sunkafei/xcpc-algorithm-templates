@@ -1,4 +1,11 @@
-# XCPC 算法模板
+## 简介
+本人本科期间获得XCPC金奖共计8枚，包括EC Final金奖和CCPC Final金奖，区域赛最好成绩为2020CCPC长春站的季军。
+<img src="https://github.com/sunkafei/sunkafei.github.io/blob/main/cv/images/xcpc-gold-medals.png"> </img>
+此外还获得过CCSP 金奖，CCCC 一等奖，华为嵌入式软件大赛总决赛算法组 冠军，华为算法大赛高校组 冠军，<a href="https://codeforces.com/contest/1885/standings">ICPC 2023 Online Challenge powered by Huawei</a>  一等奖（中国区第一名，总排名第五）。
+<img src="https://github.com/sunkafei/sunkafei.github.io/blob/main/cv/images/other-certificates.png"> </img>
+
+现已退役，将自己的算法模板整理如下，核心是数据结构和字符串，涉及的数论和计算几何较少（队友负责）。
+## 目录
 - 图论
   - 确定有限状态自动机最小化 
   - 拓扑排序 
