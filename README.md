@@ -114,14 +114,13 @@
   - QR迭代
   - 行列式计算
   - 二元一次不定方程
+  - 线性规划
 - 网络流
   - Dinic
   - ISAP
   - HLPP
   - MCMF-spfa
   - MCMF-dijkstra
-- 线性规划
-  - 线性规划
 - 字符串算法
   - 后缀树
   - 扩展KMP
