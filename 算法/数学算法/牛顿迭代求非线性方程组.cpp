@@ -1,4 +1,4 @@
-ï»¿#include <cstdio>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
@@ -6,43 +6,87 @@
 #include <vector>
 #include <functional>
 #include <array>
-#include "gauss.h"
 using namespace std;
-//const int maxn = 111;
-//using matrix = double[maxn][maxn];
-using vec = array<double, 3>; //ç”¨vectorçš„è¯ä¼šå¾ˆæ…¢
-//xä¸ºåˆå§‹è§£å‘é‡
-//calcå‡½æ•°è¿”å›ä¸€ä¸ªn * (n + 1)çš„çŸ©é˜µï¼Œå·¦è¾¹æ˜¯é›…å¯æ¯”çŸ©é˜µï¼Œå³è¾¹æ˜¯å‡½æ•°å€¼å‘é‡
-vec solve(vec x, function<void(vec, matrix&)> calc) {
+const int maxn = 100;
+using matrix = double[maxn][maxn];
+using vect = array<double, maxn>;
+const int iterations = 50;
+const double eps = 1e-8;
+const double delta = 1e-5; //deltaÖ¸¶¨²î·ÖµÄ·ù¶È
+int row[maxn], var[maxn];
+int one_possible(matrix A, int n, int m, vect& ans) {
+	memset(row, -1, sizeof(row));
+	int r = 0;
+	for (int c = 0; c < m && r < n; ++c) {
+		int x = r;
+		for (int i = x + 1; i < n; ++i)
+			if (fabs(A[i][c]) > fabs(A[x][c]))
+				x = i;
+		if (x != r) for (int j = 0; j <= m; ++j)
+			swap(A[x][j], A[r][j]);
+		if (fabs(A[r][c]) < eps)
+			continue;
+		for (int k = r + 1; k < n; ++k)
+			for (int j = m; j >= c; --j)
+				A[k][j] -= A[k][c] / A[r][c] * A[r][j];
+		row[c] = r++;
+	}
+	for (int i = r; i < n; ++i) if (fabs(A[i][m]) > eps)
+		return -1;
+	for (int c = m - 1; c >= 0; --c) {
+		int x = row[c];
+		if (x < 0)
+			ans[c] = 0;
+		else {
+			for (int i = x - 1; i >= 0; --i)
+				A[i][m] -= A[i][c] / A[x][c] * A[x][m];
+			ans[c] = A[x][m] / A[x][c];
+		}
+	}
+	return r < m;
+}
+void least_square(matrix A, int n, int m, vect& ans) {
+	static matrix T;
+	for (int i = 0; i < n; ++i)
+		for (int j = 0; j <= m; ++j)
+			T[i][j] = A[i][j];
+	for (int i = 0; i < m; ++i) {
+		for (int j = 0; j <= m; ++j) {
+			A[i][j] = 0;
+			for (int k = 0; k < n; ++k)
+				A[i][j] += T[k][i] * T[k][j];
+		}
+	}
+	one_possible(A, m, m, ans);
+}
+vect solve(vect x, function<void(vect, matrix&)> calc, int n, int m) {
 	static matrix A;
 	static vect res;
-	int n = x.size();
-	for (int T = 0; T < 50; ++T) { //ä¸åŒçš„é—®é¢˜åº”å½“è®¾ç½®ä¸åŒçš„è¿­ä»£æ¬¡æ•°
+	for (int T = 0; T < iterations; ++T) { //²»Í¬µÄÎÊÌâÓ¦µ±ÉèÖÃ²»Í¬µÄµü´ú´ÎÊı
 		calc(x, A);
-		least_square(A, n, n, res);
-		for (int i = 0; i < n; ++i)
+		least_square(A, n, m, res);
+		for (int i = 0; i < m; ++i)
 			x[i] -= res[i];
 	}
 	return x;
 }
-//æ±‚å‘é‡å€¼å‡½æ•°fçš„é›¶ç‚¹
-const double h = 1e-5; //hæŒ‡å®šå·®åˆ†çš„å¹…åº¦
-vec solve(vec x, function<vec(vec)> f) {
-	static matrix A;
+vect solve(vect x, function<vect(vect)> f, int n, int m) {
+	static matrix A; //n * (m + 1)
 	static vect res;
-	int n = x.size();
-	for (int T = 0; T < 50; ++T) { //ä¸åŒçš„é—®é¢˜åº”å½“è®¾ç½®ä¸åŒçš„è¿­ä»£æ¬¡æ•°
-		vec y = f(x);
-		for (int i = 0; i < n; ++i) { //å·®åˆ†æ³•è¿‘ä¼¼æ±‚é›…å¯æ¯”çŸ©é˜µ
-			vec u = x, v = x;
-			u[i] += h / 2; v[i] -= h / 2;
-			vec a = f(u), b = f(v);
+	for (int T = 0; T < iterations; ++T) { //²»Í¬µÄÎÊÌâÓ¦µ±ÉèÖÃ²»Í¬µÄµü´ú´ÎÊı
+		auto y = f(x);
+		for (int i = 0; i < m; ++i) { //²î·Ö·¨½üËÆÇóÑÅ¿É±È¾ØÕó
+			auto u = x, v = x;
+			u[i] += delta / 2; v[i] -= delta / 2;
+			auto a = f(u), b = f(v);
 			for (int j = 0; j < n; ++j)
-				A[j][i] = (a[j] - b[j]) / h;
-			A[i][n] = y[i];
+				A[j][i] = (a[j] - b[j]) / delta;
 		}
-		least_square(A, n, n, res);
-		for (int i = 0; i < n; ++i)
+		for (int i = 0; i < n; ++i) {
+			A[i][m] = y[i];
+		}
+		least_square(A, n, m, res);
+		for (int i = 0; i < m; ++i)
 			x[i] -= res[i];
 	}
 	return x;
@@ -51,15 +95,15 @@ int main() {
 	// (x - 1)^2 + y^2 + z^2 - 1 = 0
 	// x^2 + (y - 1)^2 + z^2 - 1 = 0
 	// x^2 + y^2 + (z - 1)^2 - 1 = 0
-	auto f = [](vec arg) ->vec {
+	auto f = [](vect arg) ->vect {
 		auto x = arg[0], y = arg[1], z = arg[2];
-		return vec{
+		return vect {
 			(x - 1) * (x - 1) + y * y + z * z - 1,
 			x * x + (y - 1) * (y - 1) + z * z - 1,
 			x * x + y * y + (z - 1) * (z - 1) - 1,
 		};
 	};
-	auto calc = [&](vec x, matrix& A) {
+	auto calc = [&](vect x, matrix& A) {
 		//Jacobi
 		for (int i = 0; i < x.size(); ++i) {
 			for (int j = 0; j < x.size(); ++j) {
@@ -74,10 +118,25 @@ int main() {
 		for (int i = 0; i < x.size(); ++i)
 			A[i][x.size()] = res[i];
 	};
-	vec x = { -122, 100, 30 };
-	auto res = solve(x, f);
-	for (auto i : res)
-		printf("%.12f ", i);
+	vect x = { -122, 100, 30 };
+	auto res = solve(x, f, 3, 3);
+	for (int i = 0; i < 3; ++i)
+		printf("%.12f ", res[i]);
+	printf("\n");
+
+
+	auto f2 = [](vect arg) ->vect {
+		auto x = arg[0], y = arg[1];
+		return vect{
+			x * x + y * y - 1,
+			x - y,
+			y + x - 1
+		};
+	};
+	vect x2 = { -1, -1 };
+	auto res2 = solve(x2, f2, 3, 2);
+	for (int i = 0; i < 2; ++i)
+		printf("%.12f ", f2(res2)[i]);
 	printf("\n");
 	return 0;
 }

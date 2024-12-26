@@ -1,7 +1,7 @@
 ## 简介
 在本科期间，本人获得了XCPC金奖共计8枚，包括EC Final金奖和CCPC Final金奖，区域赛最好成绩为2020CCPC长春站的季军。
 <img src="https://github.com/sunkafei/sunkafei.github.io/blob/main/cv/images/xcpc-gold-medals.png"> </img>
-此外还获得过CCSP 金奖，CCCC 一等奖，华为嵌入式软件大赛总决赛算法组 冠军，华为算法大赛高校组 冠军，<a href="https://codeforces.com/contest/1885/standings">ICPC 2023 Online Challenge powered by Huawei</a>  一等奖（中国区第一名，总排名第五）。
+此外还获得过CCSP 金奖，CCCC 一等奖，华为嵌入式软件大赛算法组 冠军，华为算法大赛高校组 冠军，昇腾AI原生创新算子挑战赛 冠军，<a href="https://codeforces.com/contest/1885/standings">ICPC 2023 Online Challenge powered by Huawei</a>  一等奖。
 <img src="https://github.com/sunkafei/sunkafei.github.io/blob/main/cv/images/other-certificates.png"> </img>
 
 目前本人已退役，并将自己的算法模板整理如下，重点是数据结构和字符串，涉及的数论和计算几何较少（队友负责）。
@@ -22,6 +22,10 @@
   - 有向图的传递闭包
   - 最小树形图
   - 支配树
+  - 强连通分量
+  - 无向图的割顶和桥
+  - 无向图的点双连通分量
+  - 无向图的边双连通分量
 - 树算法
   - 限定距离的子树问题
   - 树的欧拉序
@@ -153,3 +157,4 @@
   - Adam算法
   - Dyna-Q
   - kmeans聚类
+  - 对抗搜索（Alpha-Beta剪枝）
